@@ -2,13 +2,9 @@ const Joi = require("joi");
 const express = require("express");
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 const courses = [
-  {
-    id: 1,
-    name: "Course 1"
-  },
   {
     id: 1,
     name: "Course 1"
@@ -20,7 +16,11 @@ const courses = [
   {
     id: 3,
     name: "Course 3"
-  }
+  },
+  {
+    id: 4,
+    name: "Course 4"
+  },
 ];
 /**
  * app.get will listen to get requests
@@ -73,17 +73,30 @@ app.post("/api/courses", (req, res) => {
 app.put("/api/courses/:id", (req, res) => {
   const course = findCourseByID(req.params.id);
   if (!course) {
-    res.status(404).send("Course with the given id is not found.");
-    return;
+    return res.status(404).send("Course with the given id is not found.");
   }
 
   const { error } = validateCourse(req.body);
   if (error) {
-    res.status(400).send(error.details[0].message);
-    return;
+    return res.status(400).send(error.details[0].message);
   }
 
   course.name = req.body.name;
+  res.send(course);
+});
+
+/**
+ * Delete a course based on the given id
+ */
+app.delete("/api/courses/:id", (req, res) => {
+  const course = findCourseByID(req.params.id);
+  if (!course) {
+    return res.status(404).send("Course with the given id is not found.");
+  }
+
+  const index = courses.indexOf(course);
+  courses.splice(index, 1);
+
   res.send(course);
 });
 
@@ -92,7 +105,7 @@ app.put("/api/courses/:id", (req, res) => {
  * @param {Object} course
  */
 const validateCourse = course => {
-  console.log("[index.js] validateCourse: ", course)
+  console.log("[index.js] validateCourse: ", course);
   const schema = {
     name: Joi.string()
       .required()
