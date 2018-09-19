@@ -1,0 +1,8 @@
+{
+  "apiKey": "to be defined in env config",
+  "email" : {
+    "host": "dev mail host",
+    "user": "dev mail user",
+    "password": "dev password"
+  }
+}

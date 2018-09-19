@@ -1,0 +1,14 @@
+{
+  "author": {
+    "firstName": "Xuelei",
+    "lastName": "Lu",
+    "email": "xuelei.tech@gmail.com"
+  },
+  "projectName": "Node JS Course",
+  "apiKey": "to be defined in env config",
+  "email" : {
+    "host": "to be defined in env config",
+    "user": "to be defined in env config"
+  },
+  "port" : 3000
+}

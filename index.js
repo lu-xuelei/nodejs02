@@ -1,8 +1,34 @@
 const Joi = require("joi");
 const express = require("express");
+const helmet = require('helmet');
+const morgan = require('morgan');
+const config = require('config');
+
+const logger = require('./logging');
+const authenticate = require('./authenticate');
 
 const app = express();
+
+// Invoke express.json() middleware to parse the request and populate request.body
 app.use(express.json());
+
+// Invoke mddleware to parse key=value pairs to request.body
+app.use(express.urlencoded({extended: true}));
+
+// Invoke middleware to set static folder
+app.use(express.static('public'));
+
+app.use(helmet());
+if (app.get('env') === 'development') {
+  app.use(morgan('dev'));
+}
+
+// Invoke self-defind middleware functions in sequence and pass the request to next state
+app.use(logger);
+app.use(authenticate);
+
+console.log('Mail Host: ', config.get('email.host'))
+console.log('Mail Host: ', config.get('email.password'))
 
 const courses = [
   {
