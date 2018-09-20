@@ -24,11 +24,11 @@ if (app.get('env') === 'development') {
 }
 
 // Invoke self-defind middleware functions in sequence and pass the request to next state
-app.use(logger);
+app.use(logger.logger);
 app.use(authenticate);
 
-console.log('Mail Host: ', config.get('email.host'))
-console.log('Mail Host: ', config.get('email.password'))
+logger.info('Mail Host: ', config.get('email.host'))
+logger.debug('Mail Host: ', config.get('email.password'))
 
 const courses = [
   {
