@@ -1,5 +1,6 @@
 const Joi = require("joi");
-const _ = require('lodash');
+const _ = require("lodash");
+const bcrypt = require("bcrypt");
 
 const logger = require("../../util/logger");
 
@@ -41,18 +42,20 @@ const findUserByID = (req, res) => {
 const addUser = (req, res) => {
   const newInfo = extractUserInfo(req.body);
   console.debug("[userSvc]] newInfo to be added", newInfo);
-  const {error} = validateUser(newInfo);
+  const { error } = validateUser(newInfo);
   if (error) {
     console.debug("[userSvc]] newInfo invalid", error);
     return res.status(400).send(error.details[0].message);
   }
 
-  console.debug("[userSvc]] adding new user", newInfo);
-  userDao
-    .addUser(newInfo)
-    .then(result => {
-      logger.warn("[userSvc] user is added", result);
-      return res.send(_.pick(result, ['_id', 'name', 'email']));
+  encrypt(newInfo.password)
+    .then(encryptedPassword => {
+      newInfo.password = encryptedPassword;
+      console.debug("[userSvc]] adding new user", newInfo);
+      userDao.addUser(newInfo).then(result => {
+        logger.warn("[userSvc] user is added", result);
+        return res.send(_.pick(result, ["_id", "name", "email"]));
+      });
     })
     .catch(err => {
       logger.warn("[userSvc] failed to added coruse", err);
@@ -65,11 +68,13 @@ const addUser = (req, res) => {
  */
 const updateUser = (req, res) => {
   const newInfo = extractUserInfo(req.body);
-  userDao
-    .updateUser(req.params.id, newInfo)
-    .then(result => {
-      logger.debug("[userSvc] update user: updated", result);
-      return res.send(result);
+  encrypt(newInfo.password)
+    .then(encryptedPassword => {
+      newInfo.password = encryptedPassword;
+      userDao.updateUser(req.params.id, newInfo).then(result => {
+        logger.debug("[userSvc] update user: updated", result);
+        return res.send(result);
+      });
     })
     .catch(err => {
       console.warn("[userSvc] Failed to update user", err);
@@ -134,6 +139,26 @@ const extractUserInfo = reqBody => {
     newInfo.confirmPwd = reqBody.confirmPwd;
   }
   return newInfo;
+};
+
+/**
+ * Hash the input with a random salt
+ * @param {String} input 
+ */
+const encrypt = input => {
+  const promise = new Promise((resolve, reject) => {
+    bcrypt
+      .genSalt(10)
+      .then(salt => {
+        bcrypt.hash(input, salt).then(output => {
+          resolve(output);
+        });
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+  return promise;
 };
 
 module.exports = {

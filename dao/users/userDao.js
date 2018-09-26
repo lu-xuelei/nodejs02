@@ -72,6 +72,7 @@ const selectUsers = (filter, select, sort) => {
  * Adding a new user to user list
  */
 const addUser = userInfo => {
+  logger.warn("[userDao] adding user", userInfo);
   const promise = new Promise((resolve, reject) => {
     const user = new User({
       ...userInfo
