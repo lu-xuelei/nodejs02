@@ -73,6 +73,30 @@ const getCourses = () => {
 };
 
 /**
+ * Return the list of courses with specific attribute
+ * refer to https://docs.mongodb.com/manual/reference/operator/query/
+ * @param {Object} filter eg {isPublished:true, price: {$gt:15}
+ * @param {*} select attributes to be retrieved: eg {name: 1, author: 1}
+ * @param {*} sort the sorting sequence: eg {name:1, price: -1}
+ */
+const selectCourses = (filter, select, sort) => {
+  const promise = new Promise((resolve, reject) => {
+    Course.find(filter)
+      .limit(10)
+      .sort(sort)
+      .select(select)
+      .then(courses => {
+        resolve(courses);
+      })
+      .catch(err => {
+        logger.info("[coursesDao] Failed to load courses", err);
+        reject("Failed to load courses");
+      });
+  });
+  return promise;
+};
+
+/**
  * Adding a new course to course list
  */
 const addCourse = courseInfo => {
@@ -98,12 +122,6 @@ const addCourse = courseInfo => {
 
 /**
  * Update course information with given values
- *
- * In this method, the program query the course first before updating.
- *
- * There is another approach of updating mongoDB records which is to
- * update based on condition by calling the model.update({},{}) method
- * with mongoose operators
  */
 const updateCourse = (id, newInfo) => {
   const promise = new Promise((resolve, reject) => {
@@ -136,22 +154,14 @@ const updateCourse = (id, newInfo) => {
  */
 const deleteCourse = id => {
   const promise = new Promise((resolve, reject) => {
-    findCourseByID(req.params.id)
-      .then(course => {
-        logger.warn("[coursesDao] Delete course: course found", course);
-        course
-          .remove()
-          .then(result => {
-            resolve(result);
-          })
-          .catch(err => {
-            logger.warn("[coursesDao] Delete course: failed to deletee", err);
-            reject("Failed to delete course.");
-          });
+    //Course.findByIdAndDelete(id)
+    Course.deleteOne({ _id: id })
+      .then(result => {
+        resolve(result);
       })
       .catch(err => {
-        logger.warn("[coursesDao] Could not find the course to delete", err);
-        reject("Course with the given id is not found.");
+        logger.warn("[coursesDao] Delete course: failed to deletee", err);
+        reject("Failed to delete course.");
       });
   });
   return promise;
@@ -177,6 +187,57 @@ const findCourseByID = id => {
   return promise;
 };
 
+/**
+ * Alternative way of updating DB records：
+ * 1. Using findByIdAndUpdate with MongoDB Update Operators
+ * refer to https://docs.mongodb.com/manual/reference/operator/update/
+ */
+const updateCourse2 = (id, newInfo) => {
+  const promise = new Promise((resolve, reject) => {
+    // Query the particular course before update
+    Course.findByIdAndUpdate(id, {
+      // using mongoose operator to update
+      $set: {
+        ...newInfo
+      }
+    })
+      .then(result => {
+        logger.debug("[coursesDao] Update course: updated", result);
+        resolve(result);
+      })
+      .catch(err => {
+        console.warn("[coursesDao] Failed to update course", err);
+        reject("Failed ot update course.");
+      });
+  });
+  return promise;
+};
+
+/**
+ * Alternative way of updating DB records：
+ * 2. Using update with MongoDB Update Operators
+ * refer to https://docs.mongodb.com/manual/reference/operator/update/
+ */
+const updateCourses = (filter, newInfo) => {
+  const promise = new Promise((resolve, reject) => {
+    // Query the particular course before update
+    Course.update(filter, {
+      // using mongoose operator to update
+      $set: {
+        ...newInfo
+      }
+    })
+      .then(result => {
+        logger.debug("[coursesDao] Update course: updated", result);
+        resolve(result);
+      })
+      .catch(err => {
+        console.warn("[coursesDao] Failed to update course", err);
+        reject("Failed ot update course.");
+      });
+  });
+  return promise;
+};
 module.exports = {
   addCourse,
   getCourses,
