@@ -1,19 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('../connection');
 
 const logger = require("../../util/logger");
-
-// Connect to mongo database
-mongoose
-  .connect(
-    "mongodb://localhost/nodejs01",
-    { useNewUrlParser: true }
-  )
-  .then(() => {
-    logger.debug("[coursesDao] Connected to nodejs01");
-  })
-  .catch(err => {
-    logger.debug("[CoursesDao] Failed to connect to nodejs01");
-  });
 
 // Define schema for courses
 const CourseSchema = new mongoose.Schema({
@@ -65,7 +52,7 @@ const getCourses = () => {
         resolve(courses);
       })
       .catch(err => {
-        logger.info("[coursesDao] Failed to load courses", err);
+        logger.info("[courseDao] Failed to load courses", err);
         reject("Failed to load courses");
       });
   });
@@ -89,7 +76,7 @@ const selectCourses = (filter, select, sort) => {
         resolve(courses);
       })
       .catch(err => {
-        logger.info("[coursesDao] Failed to load courses", err);
+        logger.info("[courseDao] Failed to load courses", err);
         reject("Failed to load courses");
       });
   });
@@ -105,15 +92,15 @@ const addCourse = courseInfo => {
       ...courseInfo
     });
 
-    console.debug("[coursesDao] Course to be added", course);
+    console.debug("[courseDao] Course to be added", course);
     course
       .save()
       .then(result => {
-        logger.warn("[coursesDao] Course is added", result);
+        logger.warn("[courseDao] Course is added", result);
         resolve(result);
       })
       .catch(err => {
-        logger.warn("[coursesDao] failed to added coruse", err);
+        logger.warn("[courseDao] failed to added course", err);
         reject("Failed to add course");
       });
   });
@@ -128,21 +115,21 @@ const updateCourse = (id, newInfo) => {
     // Query the particular course before update
     findCourseByID(id)
       .then(course => {
-        logger.debug("[coursesDao] Update course: existing info", course);
+        logger.debug("[courseDao] Update course: existing info", course);
         course.set({ ...newInfo });
         course
           .save()
           .then(result => {
-            logger.debug("[coursesDao] Update course: updated", result);
+            logger.debug("[courseDao] Update course: updated", result);
             resolve(result);
           })
           .catch(err => {
-            console.warn("[coursesDao] Failed to update course", err);
+            console.warn("[courseDao] Failed to update course", err);
             reject("Failed ot update course.");
           });
       })
       .catch(err => {
-        logger.warn("[coursesDao] Could not find the course to update", err);
+        logger.warn("[courseDao] Could not find the course to update", err);
         reject("Course with the given id is not found.");
       });
   });
@@ -160,7 +147,7 @@ const deleteCourse = id => {
         resolve(result);
       })
       .catch(err => {
-        logger.warn("[coursesDao] Delete course: failed to deletee", err);
+        logger.warn("[courseDao] Delete course: failed to deletee", err);
         reject("Failed to delete course.");
       });
   });
@@ -172,15 +159,15 @@ const deleteCourse = id => {
  * @param {String} id
  */
 const findCourseByID = id => {
-  logger.debug("[courses] findCourseByID", id);
+  logger.debug("[courseDao] findCourseByID", id);
   const promise = new Promise((resolve, reject) => {
     Course.findById(id)
       .then(course => {
-        logger.debug("[courses] findCourseByID: course found", course);
+        logger.debug("[courseDao] findCourseByID: course found", course);
         resolve(course);
       })
       .catch(err => {
-        logger.debug("[courses] findCourseByID: course not found", err);
+        logger.debug("[courseDao] findCourseByID: course not found", err);
         reject(err);
       });
   });
@@ -202,11 +189,11 @@ const updateCourse2 = (id, newInfo) => {
       }
     })
       .then(result => {
-        logger.debug("[coursesDao] Update course: updated", result);
+        logger.debug("[courseDao] Update course: updated", result);
         resolve(result);
       })
       .catch(err => {
-        console.warn("[coursesDao] Failed to update course", err);
+        console.warn("[courseDao] Failed to update course", err);
         reject("Failed ot update course.");
       });
   });
@@ -228,11 +215,11 @@ const updateCourses = (filter, newInfo) => {
       }
     })
       .then(result => {
-        logger.debug("[coursesDao] Update course: updated", result);
+        logger.debug("[courseDao] Update course: updated", result);
         resolve(result);
       })
       .catch(err => {
-        console.warn("[coursesDao] Failed to update course", err);
+        console.warn("[courseDao] Failed to update course", err);
         reject("Failed ot update course.");
       });
   });

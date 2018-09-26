@@ -10,6 +10,7 @@ const authenticate = require('./middleware/authenticate');
 // Import routes
 const home = require('./routes/home');
 const courses = require('./routes/courses');
+const users = require('./routes/users');
 
 const app = express();
 
@@ -34,10 +35,10 @@ app.use(authenticate);
 // route all requests to specific router based on end points 
 app.use('/', home);
 app.use('/api/courses', courses);
+app.use('/api/users', users);
 
-logger.info('Mail Host: ', config.get('email.host'))
-logger.debug('Mail Host: ', config.get('email.password'))
-
+// logger.info('Mail Host: ', config.get('email.host'))
+// logger.debug('Mail Host: ', config.get('email.password'))
 
 // Start up the service and listen to a given port
 const port = config.get('port') || 3000;

@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const logger = require("../../util/logger");
 
-const courseDao = require("../../dao/courses/coursesDao");
+const courseDao = require("../../dao/courses/courseDao");
 
 /**
  * Return the list of courses
@@ -15,7 +15,7 @@ const getCourses = (req, res) => {
       return res.send(courses);
     })
     .catch(err => {
-      logger.info("[coursesSvc] Failed to load courses", err);
+      logger.info("[courseSvc] Failed to load courses", err);
       return res.status(400).send("Failed to load courses");
     });
 };
@@ -39,16 +39,16 @@ const findCourseByID = (req, res) => {
  */
 const addCourse = (req, res) => {
   const newInfo = extractCourseInfo(req.body);
-  console.debug("[courses.js] newInfo to be added", newInfo);
+  console.debug("[courseSvc] newInfo to be added", newInfo);
 
   courseDao
     .addCourse(newInfo)
     .then(result => {
-      logger.warn("[courses.js] course is added", result);
+      logger.warn("[courseSvc] course is added", result);
       return res.send(result);
     })
     .catch(err => {
-      logger.warn("[courses.js] failed to added coruse", err);
+      logger.warn("[courseSvc] failed to added course", err);
       return res.status(400).send(err);
     });
 };
@@ -61,11 +61,11 @@ const updateCourse = (req, res) => {
   courseDao
     .updateCourse(req.params.id, newInfo)
     .then(result => {
-      logger.debug("[courses.js] update course: updated", result);
+      logger.debug("[courseSvc] update course: updated", result);
       return res.send(result);
     })
     .catch(err => {
-      console.warn("[courses.js] Failed to update course", err);
+      console.warn("[courseSvc] Failed to update course", err);
       return res.status(400).send("Failed ot update course.");
     });
 };
@@ -89,7 +89,7 @@ const deleteCourse = (req, res) => {
  * @param {Object} course
  */
 const validateCourse = course => {
-  logger.debug("[coruses.js] validateCourse: ", course);
+  logger.debug("[courseSvc] validateCourse: ", course);
   const schema = {
     name: Joi.string()
       .required()
@@ -97,12 +97,12 @@ const validateCourse = course => {
   };
 
   const result = Joi.validate(course, schema);
-  logger.debug("[coruses.js] validateCourse result: ", result);
+  logger.debug("[courseSvc] validateCourse result: ", result);
   return result;
 };
 
 const extractCourseInfo = reqBody => {
-  // logger.debug("[courses.js].extractCourseInfo: New course info is", reqBody);
+  // logger.debug("[courseSvc].extractCourseInfo: New course info is", reqBody);
   const newInfo = {};
   if (reqBody.name && reqBody.name.trim() !== "") {
     newInfo.name = reqBody.name;
@@ -122,7 +122,7 @@ const extractCourseInfo = reqBody => {
   if (reqBody.tags) {
     newInfo.tags = reqBody.tags;
   }
-  // logger.debug("[courses.js].extractCourseInfo: New course info is", newInfo);
+  // logger.debug("[courseSvc].extractCourseInfo: New course info is", newInfo);
   return newInfo;
 };
 

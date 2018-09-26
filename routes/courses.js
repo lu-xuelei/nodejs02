@@ -1,7 +1,7 @@
 const express = require("express");
 
 const logger = require("../util/logger");
-const courseSvc = require("../services/courses/coursesSvc");
+const courseSvc = require("../services/courses/courseSvc");
 
 const router = express.Router();
 
