@@ -11,6 +11,7 @@ const authenticate = require('./middleware/authenticate');
 const home = require('./routes/home');
 const courses = require('./routes/courses');
 const users = require('./routes/users');
+const auth = require('./routes/auth');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(authenticate);
 app.use('/', home);
 app.use('/api/courses', courses);
 app.use('/api/users', users);
+app.use('/api/login', auth);
 
 // logger.info('Mail Host: ', config.get('email.host'))
 // logger.debug('Mail Host: ', config.get('email.password'))

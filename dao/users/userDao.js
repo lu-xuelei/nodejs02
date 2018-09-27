@@ -140,20 +140,36 @@ const deleteUser = id => {
   return promise;
 };
 
+const findByEmail = email => {
+  logger.debug("[userDao] findByEmail", email);
+  const promise = new Promise((resolve, reject) => {
+    User.findOne({ email: email })
+      .then(user => {
+        logger.debug("[userDao] findByEmail: user found", user);
+        resolve(user);
+      })
+      .catch(err => {
+        logger.debug("[userDao] findByEmail: user not found", err);
+        reject(err);
+      });
+  });
+  return promise;
+};
+
 /**
  * Find user by given ID
  * @param {String} id
  */
 const findUserByID = id => {
-  logger.debug("[users] findUserByID", id);
+  logger.debug("[userDao] findUserByID", id);
   const promise = new Promise((resolve, reject) => {
     User.findById(id)
       .then(user => {
-        logger.debug("[users] findUserByID: user found", user);
+        logger.debug("[userDao] findUserByID: user found", user);
         resolve(user);
       })
       .catch(err => {
-        logger.debug("[users] findUserByID: user not found", err);
+        logger.debug("[userDao] findUserByID: user not found", err);
         reject(err);
       });
   });
@@ -216,5 +232,6 @@ module.exports = {
   getUsers,
   findUserByID,
   updateUser,
-  deleteUser
+  deleteUser,
+  findByEmail
 };
