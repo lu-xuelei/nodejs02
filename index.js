@@ -45,6 +45,17 @@ app.use('/api/login', auth);
 // Add error handling middleware to bottom
 app.use(errors);
 
+// Add subscription to handle uncaught exception and rejection
+process.on('uncaughtException', (ex) => {
+  logger.error(ex.message, ex);
+  process.exit(1);
+})
+
+process.on('unhandledRejection', (err) => {
+  logger.error(err.message, err);
+  process.exit(1);
+})
+
 // Start up the service and listen to a given port
 const port = config.get('port') || 3000;
 app.listen(port, () => {
