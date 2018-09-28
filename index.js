@@ -8,6 +8,7 @@ const config = require('config');
 // Import middlewares
 const requestLogger = require('./middleware/requestLogger')
 const errors = require('./middleware/errors');
+const logger = require('./util/logger');
 
 // Import routes
 const home = require('./routes/home');
@@ -47,5 +48,5 @@ app.use(errors);
 // Start up the service and listen to a given port
 const port = config.get('port') || 3000;
 app.listen(port, () => {
-  console.log(`Listening to port ${port}`);
+  logger.info(`Listening to port ${port}`);
 });
