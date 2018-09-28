@@ -5,7 +5,6 @@ const config = require('config');
 
 const logger = require('./util/logger');
 const requestLogger = require('./middleware/requestLogger')
-const authenticate = require('./middleware/authenticate');
 
 // Import routes
 const home = require('./routes/home');
@@ -31,7 +30,6 @@ if (app.get('env') === 'development') {
 
 // Invoke self-defind middleware functions in sequence and pass the request to next state
 app.use(requestLogger);
-app.use(authenticate);
 
 // route all requests to specific router based on end points 
 app.use('/', home);

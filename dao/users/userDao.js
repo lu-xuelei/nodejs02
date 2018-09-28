@@ -17,6 +17,7 @@ const UserSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
+  roles: [String],
   password: {
     type: String,
     required: true,
@@ -140,6 +141,10 @@ const deleteUser = id => {
   return promise;
 };
 
+/**
+ * Find a user by given email 
+ * @param {String} email 
+ */
 const findByEmail = email => {
   logger.debug("[userDao] findByEmail", email);
   const promise = new Promise((resolve, reject) => {

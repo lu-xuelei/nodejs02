@@ -3,13 +3,12 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 
 const logger = require("../../util/logger");
-
+const jwt = require("../../util/jwtUtil");
 const userDao = require("../../dao/users/userDao");
 
 /**
  * Return the list of users
  */
-
 const getUsers = (req, res) => {
   userDao
     .getUsers()
@@ -19,6 +18,20 @@ const getUsers = (req, res) => {
     .catch(err => {
       logger.info("[userSvc] Failed to load users", err);
       return res.status(400).send("Failed to load users");
+    });
+};
+
+/**
+ * Return user with the givne ID if found
+ */
+const findMe = (req, res) => {
+  userDao
+    .findUserByID(req.user._id)
+    .then(user => {
+      return res.send(user);
+    })
+    .catch(err => {
+      res.status(404).send("user with the given id is not found.");
     });
 };
 
@@ -54,11 +67,17 @@ const addUser = (req, res) => {
       console.debug("[userSvc]] adding new user", newInfo);
       userDao.addUser(newInfo).then(result => {
         logger.warn("[userSvc] user is added", result);
-        return res.send(_.pick(result, ["_id", "name", "email"]));
+        const token = jwt.sign(result);
+        return res
+          .header(jwt.headerKey, token)
+          .send(_.pick(result, ["_id", "name", "email"]));
+      })    .catch(err => {
+        logger.warn("[userSvc] failed to add user", err);
+        return res.status(400).send(err);
       });
     })
     .catch(err => {
-      logger.warn("[userSvc] failed to added coruse", err);
+      logger.warn("[userSvc] failed to add user", err);
       return res.status(400).send(err);
     });
 };
@@ -138,12 +157,15 @@ const extractUserInfo = reqBody => {
   if (reqBody.confirmPwd && reqBody.confirmPwd.trim() !== "") {
     newInfo.confirmPwd = reqBody.confirmPwd;
   }
+  if (reqBody.roles) {
+    newInfo.roles = reqBody.roles;
+  }
   return newInfo;
 };
 
 /**
  * Hash the input with a random salt
- * @param {String} input 
+ * @param {String} input
  */
 const encrypt = input => {
   const promise = new Promise((resolve, reject) => {
@@ -165,6 +187,7 @@ module.exports = {
   addUser,
   getUsers,
   findUserByID,
+  findMe,
   updateUser,
   deleteUser
 };

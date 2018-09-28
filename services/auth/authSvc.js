@@ -3,7 +3,7 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 
 const logger = require("../../util/logger");
-
+const jwt = require('../../util/jwtUtil');
 const userDao = require("../../dao/users/userDao");
 
 /**
@@ -20,10 +20,10 @@ const authUser = (req, res) => {
   userDao
     .findByEmail(authInfo.email)
     .then(user => {
-      bcrypt.compare(authInfo.email, user.password).then(result => {
+      bcrypt.compare(authInfo.password, user.password).then(result => {
         console.debug("[authSvc]] auth success", result);
         if (result) {
-          return res.send(true);
+          return res.send(jwt.sign(user));
         } else {
           return res.status(400).send("Invalid email or password");
         }
