@@ -1,10 +1,13 @@
+require('express-async-errors');
+
 const express = require("express");
 const helmet = require('helmet');
 const morgan = require('morgan');
 const config = require('config');
 
-const logger = require('./util/logger');
+// Import middlewares
 const requestLogger = require('./middleware/requestLogger')
+const errors = require('./middleware/errors');
 
 // Import routes
 const home = require('./routes/home');
@@ -23,6 +26,7 @@ app.use(express.urlencoded({extended: true}));
 // Invoke middleware to set static folder
 app.use(express.static('public'));
 
+// helmet middleware for logging
 app.use(helmet());
 if (app.get('env') === 'development') {
   app.use(morgan('dev'));
@@ -37,8 +41,8 @@ app.use('/api/courses', courses);
 app.use('/api/users', users);
 app.use('/api/login', auth);
 
-// logger.info('Mail Host: ', config.get('email.host'))
-// logger.debug('Mail Host: ', config.get('email.password'))
+// Add error handling middleware to bottom
+app.use(errors);
 
 // Start up the service and listen to a given port
 const port = config.get('port') || 3000;
