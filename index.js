@@ -3,12 +3,12 @@ require("express-async-errors");
 const express = require("express");
 const config = require("config");
 
-const logger = require("./util/logger");
+const logger = require("./src/util/logger");
 
 const app = express();
 
 // route all requests to specific router based on end points
-require("./routes/routes")(app);
+require("./src/routes/routes")(app);
 
 // Add subscription to handle uncaught exception and rejection
 process.on("uncaughtException", ex => {
