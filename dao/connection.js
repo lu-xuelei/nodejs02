@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
+const config = require('config');
 
 const logger = require("../util/logger");
+
+const dbUrl = config.get("database.url");
 
 // Connect to mongo database
 mongoose
   .connect(
-    "mongodb://localhost/nodejs01",
+    dbUrl,
     { useNewUrlParser: true }
   )
   .then(() => {
     logger.debug("[connection] Connected to nodejs01");
-  })
-  .catch(err => {
-    logger.debug("[connection] Failed to connect to nodejs01");
   });
 
 module.exports = mongoose;

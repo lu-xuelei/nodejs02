@@ -6,10 +6,13 @@
   },
   "projectName": "Node JS Course",
   "apiKey": "to be defined in env config",
-  "email" : {
+  "email": {
     "host": "to be defined in env config",
     "user": "to be defined in env config"
   },
-  "port" : 3000,
-  "jwtPrivateKey": ""
+  "port": 3000,
+  "jwtPrivateKey": "",
+  "database": {
+    "url": "to be defined in evn config"
+  }
 }

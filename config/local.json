@@ -4,5 +4,8 @@
     "host": "local mail host",
     "user": "local mail user",
     "password": "local password"
+  },
+  "database": {
+    "url": "mongodb://localhost/nodejs01"
   }
 }
