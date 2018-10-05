@@ -101,7 +101,7 @@ const addCourse = courseInfo => {
       })
       .catch(err => {
         logger.warn("[courseDao] failed to added course", err);
-        reject("Failed to add course");
+        reject(err);
       });
   });
   return promise;
@@ -230,5 +230,6 @@ module.exports = {
   getCourses,
   findCourseByID,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  Course // for test only
 };
