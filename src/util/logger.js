@@ -2,7 +2,7 @@ const winston = require("winston");
 
 const logger = winston.createLogger({
   level: "silly",
-  format: winston.format.json(),
+  format: winston.format.simple(),
   transports: [
     //
     // - Write to all logs with level `info` and below to `combined.log`
@@ -17,7 +17,7 @@ const logger = winston.createLogger({
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(

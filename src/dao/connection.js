@@ -12,7 +12,7 @@ mongoose
     { useNewUrlParser: true }
   )
   .then(() => {
-    logger.debug("[connection] Connected to nodejs01");
+    logger.debug(`[connection] Connected to: ${dbUrl}`);
   });
 
 module.exports = mongoose;

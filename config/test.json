@@ -1,9 +1,9 @@
 {
   "apiKey": "to be defined in env config",
-  "email" : {
-    "host": "dev mail host",
-    "user": "dev mail user",
-    "password": "dev password"
+  "email": {
+    "host": "test mail host",
+    "user": "test mail user",
+    "password": "test password"
   },
   "database": {
     "url": "mongodb://localhost/nodejs01_test"

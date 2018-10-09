@@ -62,7 +62,7 @@ const getCourses = () => {
 /**
  * Return the list of courses with specific attribute
  * refer to https://docs.mongodb.com/manual/reference/operator/query/
- * @param {Object} filter eg {isPublished:true, price: {$gt:15}
+ * @param {Object} filter eg {isPublished:true, price: {$gt:15}}
  * @param {*} select attributes to be retrieved: eg {name: 1, author: 1}
  * @param {*} sort the sorting sequence: eg {name:1, price: -1}
  */
@@ -92,7 +92,7 @@ const addCourse = courseInfo => {
       ...courseInfo
     });
 
-    console.debug("[courseDao] Course to be added", course);
+    logger.debug("[courseDao] Course to be added", course);
     course
       .save()
       .then(result => {
@@ -124,8 +124,8 @@ const updateCourse = (id, newInfo) => {
             resolve(result);
           })
           .catch(err => {
-            console.warn("[courseDao] Failed to update course", err);
-            reject("Failed ot update course.");
+            logger.warn("[courseDao] Failed to update course", err);
+            reject(err);
           });
       })
       .catch(err => {
@@ -148,7 +148,7 @@ const deleteCourse = id => {
       })
       .catch(err => {
         logger.warn("[courseDao] Delete course: failed to deletee", err);
-        reject("Failed to delete course.");
+        reject(err);
       });
   });
   return promise;
@@ -193,7 +193,7 @@ const updateCourse2 = (id, newInfo) => {
         resolve(result);
       })
       .catch(err => {
-        console.warn("[courseDao] Failed to update course", err);
+        logger.warn("[courseDao] Failed to update course", err);
         reject("Failed ot update course.");
       });
   });
@@ -219,7 +219,7 @@ const updateCourses = (filter, newInfo) => {
         resolve(result);
       })
       .catch(err => {
-        console.warn("[courseDao] Failed to update course", err);
+        logger.warn("[courseDao] Failed to update course", err);
         reject("Failed ot update course.");
       });
   });
@@ -231,5 +231,7 @@ module.exports = {
   findCourseByID,
   updateCourse,
   deleteCourse,
+  selectCourses,
+  updateCourses,
   Course // for test only
 };
